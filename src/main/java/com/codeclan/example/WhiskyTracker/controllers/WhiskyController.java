@@ -19,15 +19,15 @@ public class WhiskyController {
     WhiskyRepository whiskyRepository;
 
     @GetMapping(value = "/whiskies")
-    public ResponseEntity<List<Whisky>> findWhiskiesFromGiverYear(@RequestParam(name = "year", required = false) Integer year, @RequestParam(name = "age", required = false) Integer age, @RequestParam(name = "distillery", required = false) String distilleryName) {
-        if (year == null && age == null && distilleryName == null) {
-            return new ResponseEntity<>(whiskyRepository.findAll(), HttpStatus.OK);
-        } else if (age == null && distilleryName == null) {
+    public ResponseEntity<List<Whisky>> findWhiskiesFromGiverYear(@RequestParam(name = "year", required = false) Integer year, @RequestParam(name = "age", required = false) Integer age, @RequestParam(name = "distillery", required = false) String distilleryName, @RequestParam(name = "region", required = false) String distilleryRegion) {
+        if (year != null) {
             return new ResponseEntity<>(whiskyRepository.findByYear(year.intValue()), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(whiskyRepository.findByAgeAndDistilleryName(age.intValue(), distilleryName), HttpStatus.OK);
-
+        } else if (age != null && distilleryName != null) {
+            return new ResponseEntity<>(whiskyRepository.findByAgeAndDistilleryNameIgnoreCase(age.intValue(), distilleryName), HttpStatus.OK);
+        } else if (distilleryRegion != null){
+            return new ResponseEntity<>(whiskyRepository.findByDistilleryRegionIgnoreCase(distilleryRegion), HttpStatus.OK);
         }
+        else {return new ResponseEntity<>(whiskyRepository.findAll(), HttpStatus.OK);}
     }
 }
 
